@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wheel of Fun</title>
+  <link href="https://fonts.googleapis.com/css2?family=Parisienne&display=swap" rel="stylesheet">
+  <style>
+    body {
+      background-color: #fff4f4;
+      font-family: 'Parisienne', cursive;
+      text-align: center;
+      margin: 0;
+      padding: 0;
+    }
+
+    h1 {
+      color: #d64550;
+      font-size: 3em;
+      margin: 30px 0;
+    }
+
+    .wheel-container {
+      margin: 0 auto;
+      max-width: 400px;
+      position: relative;
+      padding: 0 10px;
+    }
+
+    canvas {
+      width: 100%;
+      max-width: 400px;
+      height: auto;
+    }
+
+    .spin-btn {
+      margin-top: 20px;
+      padding: 12px 30px;
+      font-size: 1.2em;
+      color: white;
+      background-color: #f78c8c;
+      border: none;
+      border-radius: 30px;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      transition: transform 0.2s;
+      max-width: 90%;
+    }
+
+    .spin-btn:hover {
+      transform: scale(1.05);
+      background-color: #f55c5c;
+    }
+
+    .result {
+      margin-top: 30px;
+      font-size: 1.5em;
+      color: #b43e48;
+      cursor: pointer;
+      padding: 0 10px;
+    }
+
+    .reveal {
+      margin-top: 20px;
+      font-size: 1.1em;
+      color: #444;
+      background-color: #fff0f0;
+      padding: 15px;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 400px;
+      margin-left: auto;
+      margin-right: auto;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      display: none;
+    }
+
+    /* 📱 Mobile Responsive */
+    @media (max-width: 480px) {
+      h1 {
+        font-size: 2em;
+        margin: 20px 0;
+      }
+
+      .spin-btn {
+        padding: 10px 20px;
+        font-size: 1em;
+      }
+
+      .result {
+        font-size: 1.3em;
+      }
+
+      .reveal {
+        font-size: 1em;
+        padding: 12px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>🎡 Wheel of Fun 🎡</h1>
+  <div class="wheel-container">
+    <canvas id="wheel" width="400" height="400"></canvas>
+    <button class="spin-btn" onclick="spinWheel()">Spin Me!</button>
+    <div class="result" id="result" onclick="revealContent()"></div>
+    <div class="reveal" id="revealBox"></div>
+  </div>
+
+  <script>
+    const canvas = document.getElementById("wheel");
+    const ctx = canvas.getContext("2d");
+    const resultDisplay = document.getElementById("result");
+    const revealBox = document.getElementById("revealBox");
+
+    const segments = [
+      "A Compliment 💖",
+      "Happy Birthday Video 🎥",
+      "Birthday gift 😂",
+      "A Random Fact 📚",
+      "A Fun Photo Memory 📸",
+      "Spin Again 🔁"
+    ];
+
+    const revealContentMap = {
+      "A Compliment 💖": "<img src='shikha compliment.jpg' alt='Fun Memory' style='width:100%; border-radius:12px;'>",
+      "Happy Birthday Video 🎥": "<video width='100%' controls><source src='shikha birthday video.mp4' type='video/mp4'>Your browser does not support the video tag.</video>",
+      "Birthday gift 😂": "<img src='shikha birthday gift.jpg' alt='Fun Memory' style='width:100%; border-radius:12px;'>",
+      "A Random Fact 📚": "🕳️📏 If you drilled a hole straight through the Earth and jumped in, you’d fall for about 21 minutes, oscillating back and forth like a human yo-yo… forever.",
+      "A Fun Photo Memory 📸": "<img src='fun memory.png' alt='Fun Memory' style='width:100%; border-radius:14px;'>",
+      "Spin Again 🔁": "Click the spin button again to try your luck! 🎲"
+    };
+
+    const colors = ["#ffb3ba", "#ffdfba", "#ffffba", "#baffc9", "#bae1ff", "#e2baff"];
+    const numSegments = segments.length;
+    const anglePerSegment = (2 * Math.PI) / numSegments;
+
+    function drawWheel() {
+      for (let i = 0; i < numSegments; i++) {
+        ctx.beginPath();
+        ctx.moveTo(200, 200);
+        ctx.fillStyle = colors[i];
+        ctx.arc(200, 200, 200, i * anglePerSegment, (i + 1) * anglePerSegment);
+        ctx.fill();
+
+        ctx.save();
+        ctx.translate(200, 200);
+        ctx.rotate(i * anglePerSegment + anglePerSegment / 2);
+        ctx.fillStyle = "#333";
+        ctx.font = "14px sans-serif";
+        ctx.textAlign = "right";
+        ctx.fillText(segments[i], 180, 5);
+        ctx.restore();
+      }
+    }
+
+    let angle = 0;
+    let spinning = false;
+    let selectedSegment = "";
+
+    function spinWheel() {
+      if (spinning) return;
+      spinning = true;
+      revealBox.style.display = 'none';
+      revealBox.innerHTML = '';
+
+      let spinAngle = Math.random() * 360 + 720;
+      let spinDuration = 3000;
+
+      const start = performance.now();
+      function animate(now) {
+        const elapsed = now - start;
+        const progress = Math.min(elapsed / spinDuration, 1);
+        angle = (spinAngle * easeOutCubic(progress)) % 360;
+        drawRotatedWheel(angle);
+        if (progress < 1) {
+          requestAnimationFrame(animate);
+        } else {
+          const selected = Math.floor((numSegments - angle / 360 * numSegments) % numSegments);
+          selectedSegment = segments[selected];
+          resultDisplay.textContent = selectedSegment;
+          spinning = false;
+        }
+      }
+      requestAnimationFrame(animate);
+    }
+
+    function easeOutCubic(t) {
+      return (--t) * t * t + 1;
+    }
+
+    function drawRotatedWheel(rotationAngle) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.save();
+      ctx.translate(200, 200);
+      ctx.rotate((rotationAngle * Math.PI) / 180);
+      ctx.translate(-200, -200);
+      drawWheel();
+      ctx.restore();
+    }
+
+    function revealContent() {
+      if (selectedSegment && revealContentMap[selectedSegment]) {
+        revealBox.innerHTML = revealContentMap[selectedSegment];
+        revealBox.style.display = 'block';
+      }
+    }
+
+    drawWheel();
+  </script>
+</body>
+</html>

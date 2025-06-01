@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Chat with Shikha 💬</title>
+  <style>
+    body {
+      background-color: #fff0f5;
+      font-family: 'Comic Sans MS', cursive;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+      margin: 0;
+    }
+
+    h1 {
+      color: #d94f70;
+      font-size: 2em;
+      margin-bottom: 15px;
+      text-align: center;
+    }
+
+    .chat-box {
+      width: 100%;
+      max-width: 400px;
+      height: 80vh;
+      background: #fff;
+      border-radius: 15px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .messages {
+      flex: 1;
+      padding: 15px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      font-size: 0.95em;
+    }
+
+    .message {
+      max-width: 75%;
+      padding: 10px 14px;
+      border-radius: 20px;
+      line-height: 1.4;
+      word-wrap: break-word;
+    }
+
+    .user {
+      align-self: flex-end;
+      background-color: #ffe4ec;
+      color: #b83f5c;
+      border-bottom-right-radius: 0;
+    }
+
+    .shikha {
+      align-self: flex-start;
+      background-color: #e0f7ff;
+      color: #397b9d;
+      border-bottom-left-radius: 0;
+    }
+
+    .input-box {
+      display: flex;
+      padding: 10px;
+      border-top: 1px solid #eee;
+      background-color: #fff;
+    }
+
+    .input-box input {
+      flex: 1;
+      border: none;
+      border-radius: 20px;
+      padding: 10px;
+      outline: none;
+      font-size: 1em;
+    }
+
+    .input-box button {
+      margin-left: 10px;
+      background: #d94f70;
+      border: none;
+      border-radius: 20px;
+      padding: 10px 15px;
+      color: white;
+      font-size: 1em;
+      cursor: pointer;
+    }
+
+    .input-box button:active {
+      transform: scale(0.98);
+    }
+
+    #typing {
+      display: none;
+      font-style: italic;
+      color: #999;
+      text-align: left;
+      padding: 5px 15px;
+      font-size: 0.9em;
+    }
+  </style>
+</head>
+<body>
+  <h1>Chat with Shikha 💖</h1>
+
+  <div class="chat-box">
+    <div class="messages" id="messages">
+      <div class="message shikha">Heyy 💕</div>
+      <div class="message user">Happyyy birthdayyyy Shikhaaa 🎉🎂</div>
+      <div class="message shikha">Aww you're the sweetest 😭💓</div>
+    </div>
+    <div id="typing">Shikha is typing...</div>
+    <div class="input-box">
+      <input type="text" id="msgInput" placeholder="Type something fun..." />
+      <button onclick="sendMessage()">Send</button>
+    </div>
+  </div>
+
+  <script>
+    function sendMessage() {
+      const input = document.getElementById('msgInput');
+      const msg = input.value.trim();
+      if (!msg) return;
+
+      const messages = document.getElementById('messages');
+
+      const userMsg = document.createElement('div');
+      userMsg.className = 'message user';
+      userMsg.textContent = msg;
+      messages.appendChild(userMsg);
+      input.value = '';
+      messages.scrollTop = messages.scrollHeight;
+
+      document.getElementById('typing').style.display = 'block';
+
+      setTimeout(() => {
+        const replies = [
+          "LMAO 😂",
+          "STOPP 😭",
+          "ILYSM 💖",
+          "fuck off 😂",
+          "This made my day 🥹",
+          "Best. Chat. Ever."
+        ];
+        const reply = replies[Math.floor(Math.random() * replies.length)];
+
+        const botMsg = document.createElement('div');
+        botMsg.className = 'message shikha';
+        botMsg.textContent = reply;
+        messages.appendChild(botMsg);
+
+        document.getElementById('typing').style.display = 'none';
+        messages.scrollTop = messages.scrollHeight;
+      }, 1000);
+    }
+  </script>
+</body>
+</html>
